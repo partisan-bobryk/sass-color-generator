@@ -14,7 +14,7 @@ It's common for an application to contain specific a theme color, though it's no
 | Support for secondary and tertiary colors | TODO |
 | SCSS Syntax | In Progress | 
 | SASS Syntax | TODO |
-| Support for different color scales | TODO |
+| Support for different color spaces | TODO |
 
 
 
