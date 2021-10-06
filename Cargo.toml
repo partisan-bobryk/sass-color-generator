@@ -8,3 +8,4 @@ edition = "2018"
 [dependencies]
 prisma = "0.1.1"
 clap = "2.33.3"
+angular-units = "0.2.4"

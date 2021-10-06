@@ -30,7 +30,7 @@ impl Args {
             .to_string();
         let outputfile = matches
             .value_of("outputfile")
-            .unwrap_or_default()
+            .unwrap_or("theme_colors.scss")
             .to_string();
 
         Self {

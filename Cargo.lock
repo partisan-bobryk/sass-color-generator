@@ -107,6 +107,7 @@ dependencies = [
 name = "sass-color-generator"
 version = "0.1.0"
 dependencies = [
+ "angular-units",
  "clap",
  "prisma",
 ]
