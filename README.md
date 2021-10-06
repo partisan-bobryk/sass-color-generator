@@ -10,11 +10,11 @@ It's common for an application to contain specific a theme color, though it's no
 
 | Feature | Status |
 | -- | -- |
-| Support for primary color | In Progress |
-| Support for secondary and tertiary colors | TODO |
-| SCSS Syntax | In Progress | 
+| Support for primary color | ✅ Done |
+| SCSS Syntax | ✅ Done | 
+| Generate grayscale based on the primary color | TODO |
+| Generating colors based on different palletes | In Progress |
 | SASS Syntax | TODO |
-| Support for different color spaces | TODO |
 
 
 
