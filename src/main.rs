@@ -3,6 +3,7 @@ extern crate angular_units as angle;
 use angle::Deg;
 use prisma::{FromColor, Hsl, Rgb};
 use sass_color_generator::args::Args;
+use sass_color_generator::color_utils::{ColorTemperature, ColorTheory};
 use std::fs::File;
 use std::io::{BufWriter, Result, Write};
 
@@ -25,7 +26,9 @@ fn main() -> Result<()> {
         .write(format!("$primary-color: {};\n\n", &primary_color_hex).as_bytes())
         .unwrap();
 
-    file_buffer.write(format!("\n// Tints - Ligheter").as_bytes()).unwrap();
+    file_buffer
+        .write(format!("\n// Tints - Ligheter").as_bytes())
+        .unwrap();
 
     for (idx, tint) in calculate_tints(&rgb_val).iter().enumerate() {
         let hex_tint_val = convert_rgb_to_hex(tint);
@@ -34,13 +37,27 @@ fn main() -> Result<()> {
             .unwrap();
     }
 
-    file_buffer.write(format!("\n// Shades").as_bytes()).unwrap();
+    file_buffer
+        .write(format!("\n// Shades").as_bytes())
+        .unwrap();
 
     for (idx, shade) in calculate_shades(&rgb_val).iter().enumerate() {
         let hex_shade_val = convert_rgb_to_hex(shade);
 
         file_buffer
             .write(format!("$primary-shade-{}: {};\n", idx + 1, hex_shade_val).as_bytes())
+            .unwrap();
+    }
+
+    file_buffer
+    .write(format!("\n// Grayscales").as_bytes())
+    .unwrap();
+
+    for (idx, grayscale) in calculate_grayscale(&rgb_val).iter().enumerate() {
+        let hex_shade_val = convert_rgb_to_hex(grayscale);
+
+        file_buffer
+            .write(format!("$gray-{}: {};\n", idx + 1, hex_shade_val).as_bytes())
             .unwrap();
     }
 
@@ -120,4 +137,41 @@ fn calculate_shades(rgb_val: &Rgb<f32>) -> Vec<Rgb<f32>> {
     }
 
     shades
+}
+
+fn calculate_grayscale(rgb_val: &Rgb<f32>) -> Vec<Rgb<f32>> {
+    /*
+     * Grayscales should be of a cooler tone. If the color provided is on the warm
+     * spectrum, it is best to reduce the saturation all the way so it becomes a more
+     * nutral color.
+     */
+
+    // Before we begin convert the rgb to hsl
+    let mut base_grayscale: Hsl<f32, Deg<f32>> = Hsl::from_color(rgb_val);
+    let is_cooler_undertone: bool = match base_grayscale.get_temperature() {
+        ColorTemperature::Cool => true,
+        _ => false,
+    };
+
+    if is_cooler_undertone == true {
+        base_grayscale.set_saturation(0.0);
+    } else {
+        base_grayscale.set_saturation(0.05);
+    }
+
+    let mut grayscales: Vec<Rgb<f32>> = vec![];
+    // Convert hsl back into rgb
+    let rgb_grayscale: Rgb<f32> = Rgb::from_color(&base_grayscale);
+
+    for shade in calculate_shades(&rgb_grayscale) {
+        grayscales.push(shade);
+    }
+
+    grayscales.push(rgb_grayscale);
+
+    for tint in calculate_tints(&rgb_grayscale) {
+        grayscales.push(tint);
+    }
+
+    grayscales
 }
